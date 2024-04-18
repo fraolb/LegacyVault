@@ -2,16 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { getBalance } from "@wagmi/core";
-import { config } from "@/config";
-import { GetBalanceReturnType } from "@wagmi/core";
-import { formatEther } from "viem";
 
 import Main from "@/components/Tabs/Main";
 import Lock from "@/components/Tabs/Lock";
 import Swap from "@/components/Tabs/Swap";
 import MultiSend from "@/components/Tabs/MultiSend";
 import Settings from "@/components/Tabs/Settings";
+import Transfer from "@/components/Tabs/Transfer";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -43,7 +40,7 @@ export default function Home() {
         <div className="h2 text-center">
           <div className="max-w-3xl mx-auto">
             {selectedPage == 0 ? (
-              <Main />
+              <Transfer />
             ) : selectedPage == 1 ? (
               <Swap />
             ) : selectedPage == 2 ? (
@@ -64,7 +61,7 @@ export default function Home() {
                 onClick={() => selectPage(0)}
               >
                 <svg
-                  className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+                  className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-mainHard dark:group-hover:text-mainHard"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -72,7 +69,7 @@ export default function Home() {
                 >
                   <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
                 </svg>
-                <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
+                <span className="text-sm text-gray-500 dark:text-mainHard group-hover:text-mainHard dark:group-hover:text-mainHard">
                   Home
                 </span>
               </button>
@@ -115,7 +112,7 @@ export default function Home() {
                 onClick={() => selectPage(2)}
               >
                 <svg
-                  className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+                  className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-main dark:group-hover:text-blue-500"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -130,7 +127,7 @@ export default function Home() {
                   />
                 </svg>
                 <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-                  M-Send
+                  MSend
                 </span>
               </button>
 

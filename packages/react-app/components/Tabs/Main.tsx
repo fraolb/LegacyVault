@@ -7,7 +7,6 @@ import { formatEther } from "viem";
 
 const Main = () => {
   const [userAddress, setUserAddress] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
   const { address, isConnected } = useAccount();
   const [balances, setBalances] = useState<Array<GetBalanceReturnType | null>>(
     []
@@ -59,7 +58,7 @@ const Main = () => {
 
   return (
     <div>
-      <div>
+      <div className="text-mainHard">
         {" "}
         Your address: {userAddress}
         {balances.map((balance, index) => (
