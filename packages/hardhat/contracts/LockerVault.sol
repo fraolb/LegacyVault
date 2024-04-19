@@ -45,13 +45,13 @@ contract LegacyVault {
         address[] memory _userAccounts
     ) public payable checkDeposit {
         //s_users.push(payable(msg.address));
-        address User = msg.address;
-        s_userBalance[msg.address] = msg.value;
-        s_userTimer[msg.address] = _timer;
+        address User = msg.sender;
+        s_userBalance[msg.sender] = msg.value;
+        s_userTimer[msg.sender] = _timer;
         if (_userAccounts.length == 0) {
-            s_userAccounts[msg.address] = _userAccounts;
+            s_userAccounts[msg.sender] = _userAccounts;
         }
-        emit UserDeposited(msg.address, _timer);
+        emit UserDeposited(msg.sender, _timer);
     }
 
     function Withdraw(uint256 _amount) public {

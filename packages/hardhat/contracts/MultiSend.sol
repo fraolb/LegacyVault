@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract MultiSendContract {
+contract MultiSend {
     event FundsReceived(address indexed sender, uint256 amount);
     event FundsSent(address indexed recipient, uint256 amount);
 
