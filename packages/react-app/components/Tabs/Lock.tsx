@@ -1,5 +1,5 @@
 const Lock = () => {
-  return <div>Enter</div>;
+  return <div className="container mx-auto p-4">Enter</div>;
 };
 
 export default Lock;

@@ -1,12 +1,30 @@
 import { useState, useEffect } from "react";
-import { newKit, newKitFromWeb3 } from "@celo/contractkit";
-import { useAccount } from "wagmi";
+import { newKit } from "@celo/contractkit";
+import MultiSendABI from "../../ContractABI/MultiSendABI.json";
+import {
+  type BaseError,
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
+import { ethers } from "ethers";
+import { parseEther } from "viem";
 
 const MultiSend = () => {
   const [addresses, setAddresses] = useState<string[]>([""]);
   const [amount, setAmount] = useState<string>("");
   const { address, isConnected } = useAccount();
-  const [userAddress, setUserAddress] = useState("");
+  const [userAddress, setUserAddress] = useState<string>("");
+
+  const { data: hash, error, isPending, writeContract } = useWriteContract();
+
+  const MultiSendContract = "0x89BE7812ff29020a5Fa31b9a0ccf17A37D9B90F9";
+
+  useEffect(() => {
+    if (isConnected && address) {
+      setUserAddress(address);
+    }
+  }, [isConnected, address]);
 
   const handleAddAddress = () => {
     setAddresses([...addresses, ""]);
@@ -22,102 +40,86 @@ const MultiSend = () => {
     setAmount(event.target.value);
   };
 
-  const handleSend = async () => {
-    // Initialize ContractKit with the desired Celo network endpoint
-    const kit = newKit("https://alfajores-forno.celo-testnet.org");
-    let accounts = await kit.web3.eth.getAccounts();
-    if (accounts.length === 0) {
-      console.error("No accounts found in the connected wallet");
-      return;
-    }
-    console.log("the account is", accounts[0]);
-    let totalBalance = kit.getTotalBalance(userAddress);
-    console.log("total balance of : ", userAddress, totalBalance);
-    // Set the default account to the first account in the accounts array
-    //kit.defaultAccount = `${accounts[0]}`;
-
-    // Ensure amount is valid
-    if (!amount || parseFloat(amount) <= 0) {
-      console.error("Invalid amount");
-      return;
-    }
-
-    // Ensure there is at least one recipient address
-    if (addresses.length === 0) {
-      console.error("No recipient addresses provided");
-      return;
-    }
-
-    try {
-      // Calculate the amount to send in wei
-      const amountInWei = kit.connection.web3.utils.toWei(amount, "ether");
-
-      // Get the cUSD contract
-      const stableToken = await kit.contracts.getStableToken();
-
-      // Transfer funds to each recipient
-      for (const address of addresses) {
-        // Send the transaction to transfer funds to the recipient
-        const tx = await stableToken.transfer(address, amountInWei).send({
-          from: userAddress,
-        });
-
-        // Wait for the transaction to be mined and get the receipt
-        const receipt = await tx.waitReceipt();
-        console.log(
-          `Funds sent to ${address}: Transaction hash - ${receipt.transactionHash}`
-        );
-      }
-
-      console.log(`Total amount sent: ${amountInWei} wei`);
-    } catch (error) {
-      console.error("Error sending multi-send transaction:", error);
-    }
+  const handleDeleteAddress = (index: number) => {
+    const updatedAddresses = [...addresses];
+    updatedAddresses.splice(index, 1);
+    setAddresses(updatedAddresses);
   };
 
-  useEffect(() => {
-    if (isConnected && address) {
-      setUserAddress(address);
-    }
-  }, []);
+  const handleSend = async () => {
+    const amountToSend = Number(amount) * addresses.length;
+    writeContract({
+      address: MultiSendContract,
+      abi: MultiSendABI,
+      functionName: "multiSend",
+      args: [addresses],
+      value: parseEther(`${amountToSend}`),
+    });
+  };
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   return (
-    <div className="container p-4 sm:p-6 border border-red-500">
-      <h1 className="text-3xl font-semibold mb-4 text-center">MultiSender</h1>
-      <h6 className="text-sm font-semibold mb-4 text-center">{userAddress}</h6>
+    <div className="container p-4 sm:p-6  ">
+      <h1 className="text-3xl font-semibold mb-6 text-center">
+        Multi - Sender
+      </h1>
       <form className="space-y-6">
-        <div>
+        <div className="flex align-middle">
           <label
             htmlFor="amount"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-white flex items-center pr-2"
           >
-            Amount
+            Amount (CELO)
           </label>
+
           <input
             id="amount"
             type="number"
             value={amount}
             onChange={handleAmountChange}
-            className="mt-1 focus:ring-blue-500 w-full focus:border-blue-500 block shadow-sm sm:text-sm border-gray-300 rounded-md px-4 py-2 border"
+            className="mt-1 text-black focus:ring-blue-500 w-3/4 focus:border-blue-500 block shadow-sm sm:text-sm border-gray-300 rounded-md px-4 py-2 border"
           />
         </div>
-        {addresses.map((address, index) => (
-          <div key={index} className="border border-gray-300 rounded-md mb-4">
-            <label
-              htmlFor={`address-${index}`}
-              className="block text-sm font-medium text-gray-700 px-4 py-2"
-            >
-              Address {index + 1}
-            </label>
-            <input
-              id={`address-${index}`}
-              type="text"
-              value={address}
-              onChange={(e) => handleAddressChange(index, e.target.value)}
-              className="flex-1 focus:ring-blue-500 w-full focus:border-blue-500 block shadow-sm sm:text-sm border-gray-300 rounded-md px-4 py-2 border-t-0"
-            />
-          </div>
-        ))}
+        <div className="text-l font-semibold text-center text-white">
+          Receiver Addresses
+        </div>
+        <div className="overflow-auto max-h-48">
+          {" "}
+          {/* Adjust max-h-48 to your desired maximum height */}
+          {addresses.map((address, index) => (
+            <div key={index} className="rounded-md mb-4 flex items-center">
+              <input
+                id={`address-${index}`}
+                type="text"
+                value={address}
+                placeholder={`address ${index + 1}`}
+                onChange={(e) => handleAddressChange(index, e.target.value)}
+                className="flex-1 focus:ring-mainLight text-black w-full focus:border-mainLight block shadow-sm sm:text-sm border-mainLight rounded-md px-4 py-2 border-t-0"
+              />
+              <button
+                type="button"
+                onClick={() => handleDeleteAddress(index)}
+                className="text-white ml-2 bg-red-500 px-3 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <svg
+                  viewBox="0 0 924 1024"
+                  width="15px"
+                  height="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill="#ffffff"
+                    d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
+        </div>
         <div className="flex justify-end">
           <button
             type="button"
@@ -127,13 +129,33 @@ const MultiSend = () => {
             Add Address
           </button>
         </div>
-        <div className="flex justify-center">
+        <div className="w-full flex flex-wrap">
+          {/* {hash && (
+            <div className="break-words">
+              Transaction Hash: <div className="w-1/2">{hash}</div>
+            </div>
+          )} */}
+          {isConfirming && (
+            <div className="w-full">Waiting for confirmation...</div>
+          )}
+          {isConfirmed && <div className="w-full">Transaction confirmed.</div>}
+          {error && (
+            <div className="w-full">
+              Error: {(error as BaseError).shortMessage || error.message}
+            </div>
+          )}
+          {addresses.length == 0 ? (
+            <div className="w-full">Add Receiver Address!</div>
+          ) : null}
+        </div>
+        <div className="fixed bottom-16 left-0 right-0  p-4 sm:p-6 ">
           <button
             type="button"
             onClick={handleSend}
-            className="inline-flex w-full text-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            disabled={isPending}
+            className="inline-flex w-full text-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
-            Send
+            {isPending ? "Confirming..." : "Send"}
           </button>
         </div>
       </form>

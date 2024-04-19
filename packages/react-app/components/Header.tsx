@@ -18,14 +18,14 @@ export default function Header() {
   }, []);
 
   return (
-    <Disclosure as="nav" className="bg-blue border-b border-black">
+    <Disclosure as="nav" className="bg-white border-b border-mainLight">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             {!hideConnectBtn && (
               <div className="relative flex h-16 justify-between">
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="flex flex-shrink-0 items-center">
+                  {/* <div className="flex flex-shrink-0 items-center">
                     <Image
                       className="block h-8 w-auto sm:block lg:block"
                       src="/logo.svg"
@@ -33,7 +33,7 @@ export default function Header() {
                       height="24"
                       alt="Celo Logo"
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <ConnectButton
