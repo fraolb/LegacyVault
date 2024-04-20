@@ -69,7 +69,7 @@ const Main = () => {
         //https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
         try {
           const response = await fetch(
-            "https://gateway.ipfs.io/ipns/tokens.uniswap.org"
+            "https://cors.bridged.cc/https://gateway.ipfs.io/ipns/tokens.uniswap.org"
           );
           const { tokens } = await response.json();
 
@@ -104,7 +104,7 @@ const Main = () => {
   console.log(balances);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container w-full p-4 ">
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Token Balances
       </h1>
@@ -115,49 +115,54 @@ const Main = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 gap-2 mb-12">
         {balances.map((balance, index) => (
           <div
             key={index}
-            className="bg-white text-mainHard rounded-lg shadow-lg p-4"
+            className="bg-white w-full text-mainHard rounded-lg shadow-lg p-2 px-4 flex items-center justify-between"
           >
             {balance && (
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2">
+              <>
+                <div className="flex flex-col">
+                  <div className="text-xl font-semibold text-left">
+                    {balance.symbol}
+                  </div>
+                  <div className="flex items-center mt-1">
+                    <span className="text-sm">
+                      {balance.token.substring(0, 4)}...
+                      {balance.token.substring(balance.token.length - 4)}
+                    </span>
+                    <button
+                      className="ml-2 text-sm text-disabled hover:text-mainHard focus:outline-none"
+                      onClick={() => copyToClipboard(balance.token)}
+                    >
+                      <svg
+                        width="16px"
+                        height="16px"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6 11C6 8.17157 6 6.75736 6.87868 5.87868C7.75736 5 9.17157 5 12 5H15C17.8284 5 19.2426 5 20.1213 5.87868C21 6.75736 21 8.17157 21 11V16C21 18.8284 21 20.2426 20.1213 21.1213C19.2426 22 17.8284 22 15 22H12C9.17157 22 7.75736 22 6.87868 21.1213C6 20.2426 6 18.8284 6 16V11Z"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                        />
+                        <path
+                          d="M6 19C4.34315 19 3 17.6569 3 16V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H15C16.6569 2 18 3.34315 18 5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-2xl font-semibold">
                   {balance.value !== undefined &&
                     ethers.utils.formatEther(balance.value)}
                 </div>
-                <div className="text-sm">{balance.symbol}</div>
-                <div className="text-xs flex">
-                  <span className="whitespace-nowrap">
-                    {balance.token.substring(0, 4)}...
-                    {balance.token.substring(balance.token.length - 4)}
-                  </span>{" "}
-                  <button
-                    className="text-sm text-disabled hover:text-mainHard focus:outline-none"
-                    onClick={() => copyToClipboard(balance.token)}
-                  >
-                    <svg
-                      width="16px"
-                      height="16px"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 11C6 8.17157 6 6.75736 6.87868 5.87868C7.75736 5 9.17157 5 12 5H15C17.8284 5 19.2426 5 20.1213 5.87868C21 6.75736 21 8.17157 21 11V16C21 18.8284 21 20.2426 20.1213 21.1213C19.2426 22 17.8284 22 15 22H12C9.17157 22 7.75736 22 6.87868 21.1213C6 20.2426 6 18.8284 6 16V11Z"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      />
-                      <path
-                        d="M6 19C4.34315 19 3 17.6569 3 16V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H15C16.6569 2 18 3.34315 18 5"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              </>
             )}
           </div>
         ))}

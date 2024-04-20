@@ -63,7 +63,7 @@ const MultiSend = () => {
     });
 
   return (
-    <div className="container p-4 sm:p-6  ">
+    <div className="container p-4">
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Multi - Sender
       </h1>
@@ -98,7 +98,7 @@ const MultiSend = () => {
                 value={address}
                 placeholder={`address ${index + 1}`}
                 onChange={(e) => handleAddressChange(index, e.target.value)}
-                className="flex-1 focus:ring-mainLight text-black w-full focus:border-mainLight block shadow-sm sm:text-sm border-mainLight rounded-md px-4 py-2 border-t-0"
+                className="mt-1 text-black focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-4 py-2"
               />
               <button
                 type="button"

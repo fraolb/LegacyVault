@@ -38,7 +38,7 @@ export default function Home() {
     <div className="flex flex-col ">
       {isConnected ? (
         <div className="h2 text-center">
-          <div className="max-w-3xl mx-auto">
+          <div className="w-screen p-2">
             {selectedPage == 0 ? (
               <Main />
             ) : selectedPage == 1 ? (
@@ -223,7 +223,7 @@ export default function Home() {
                     selectedPage === 4 ? "text-mainHard" : ""
                   }`}
                 >
-                  Settings
+                  FAQ
                 </span>
               </button>
             </div>
