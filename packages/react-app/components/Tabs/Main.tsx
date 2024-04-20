@@ -1,37 +1,23 @@
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { getBalance } from "@wagmi/core";
+import { getBalance, getAccount } from "@wagmi/core";
 import { config } from "@/config";
 import { GetBalanceReturnType } from "@wagmi/core";
 import { formatEther } from "viem";
 import { ethers } from "ethers";
+import TokenList from "../../assets/MainnetTokens.json";
+import nativeCeloTokens from "../../assets/celoNativeTokens.json";
+import testnetCeloTokens from "../../assets/TestnetTokens.json";
 
 const Main = () => {
   const [userAddress, setUserAddress] = useState("");
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
+  const account = getAccount(config);
+
   const [balances, setBalances] = useState<Array<GetBalanceReturnType | null>>(
     []
   );
   const [celoAddress, setCeloAddress] = useState([]);
-
-  const celoMainnetTokens = [
-    {
-      address: "0x471EcE3750Da237f93B8E339c536989b8978a438",
-      symbol: "CELO",
-    },
-    {
-      address: "0x765de816845861e75a25fca122bb6898b8b1282a",
-      symbol: "cUSD",
-    },
-    {
-      address: "0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73",
-      symbol: "cEUR",
-    },
-    {
-      address: "0xe8537a3d056DA446677B9E9d6c5dB704EaAb4787",
-      symbol: "cREAL",
-    },
-  ];
 
   function copyToClipboard(text) {
     navigator.clipboard
@@ -45,6 +31,7 @@ const Main = () => {
         // Handle any errors that might occur during copying
       });
   }
+  console.log("the chain id is ", account, address, chainId);
 
   useEffect(() => {
     const fetchBalances = async () => {
@@ -53,47 +40,70 @@ const Main = () => {
 
         // Fetch the balance of the native token
         const nativeTokenBalance = await Promise.all(
-          celoMainnetTokens.map(async (token) => {
-            const TokenAddress = token.address;
-            const TokenSymbol = token.symbol;
-            const balance = await getBalance(config, {
-              address: address,
-              token: token.address,
-            });
-            return { ...balance, token: TokenAddress, symbol: TokenSymbol };
-          })
-        );
-        setBalances([...nativeTokenBalance]);
-
-        // Fetch Uniswap token list
-        //https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
-        try {
-          const response = await fetch(
-            "https://cors.bridged.cc/https://gateway.ipfs.io/ipns/tokens.uniswap.org"
-          );
-          const { tokens } = await response.json();
-
-          // Filter tokens that are on the Celo mainnet
-          const celoMainnetTokensFromUniSwap = tokens.filter(
-            (token) => token.chainId === 42220
-          );
-          setCeloAddress(celoMainnetTokensFromUniSwap);
-          // Fetch balances of Uniswap tokens
-          const TokenBalances = await Promise.all(
-            celoMainnetTokensFromUniSwap.map(async (token) => {
+          (chainId == 42220 ? nativeCeloTokens : testnetCeloTokens).map(
+            async (token) => {
               const TokenAddress = token.address;
+              const TokenSymbol = token.symbol;
               const balance = await getBalance(config, {
                 address: address,
                 token: token.address,
               });
-              return { ...balance, token: TokenAddress };
-            })
-          );
+              return { ...balance, token: TokenAddress, symbol: TokenSymbol };
+            }
+          )
+        );
+        setBalances([...nativeTokenBalance]);
 
-          // Update the state with all balances combined
-          setBalances([...nativeTokenBalance, ...TokenBalances]);
-        } catch (err) {
-          console.log(err);
+        if (chainId !== 42220) {
+          const balance = await getBalance(config, {
+            address: address,
+          });
+          console.log("the coin native ", balance);
+          setBalances([
+            {
+              value: balance?.value,
+              symbol: balance?.symbol,
+              decimals: balance?.decimals,
+              formatted: balance?.formatted,
+              token: "",
+            },
+            ...nativeTokenBalance,
+          ]);
+        }
+
+        // Fetch Uniswap token list
+        //https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
+        if (chainId == 42220) {
+          try {
+            //   const response = await fetch(
+            //     "https://cors.bridged.cc/https://gateway.ipfs.io/ipns/tokens.uniswap.org"
+            //   );
+            //   const { tokens } = await response.json();
+
+            // Filter tokens that are on the Celo mainnet
+            // const celoMainnetTokensFromUniSwap = tokens.filter(
+            //   (token) => token.chainId === 42220
+            // );
+
+            //setCeloAddress(celoMainnetTokensFromUniSwap);
+
+            // Fetch balances of Uniswap tokens
+            const TokenBalances = await Promise.all(
+              TokenList.map(async (token) => {
+                const TokenAddress = token.address;
+                const balance = await getBalance(config, {
+                  address: address,
+                  token: token.address,
+                });
+                return { ...balance, token: TokenAddress };
+              })
+            );
+
+            // Update the state with all balances combined
+            setBalances([...nativeTokenBalance, ...TokenBalances]);
+          } catch (err) {
+            console.log(err);
+          }
         }
       }
     };
@@ -119,7 +129,7 @@ const Main = () => {
         {balances.map((balance, index) => (
           <div
             key={index}
-            className="bg-white w-full text-mainHard rounded-lg shadow-lg p-2 px-4 flex items-center justify-between"
+            className="bg-inputDarkBg border border-mainHard text-white w-full text-mainHard rounded-lg shadow-lg p-2 px-4 flex items-center justify-between"
           >
             {balance && (
               <>
@@ -127,7 +137,7 @@ const Main = () => {
                   <div className="text-xl font-semibold text-left">
                     {balance.symbol}
                   </div>
-                  <div className="flex items-center mt-1">
+                  <div className="flex text-mainHard items-center mt-1">
                     <span className="text-sm">
                       {balance.token.substring(0, 4)}...
                       {balance.token.substring(balance.token.length - 4)}
@@ -160,7 +170,7 @@ const Main = () => {
 
                 <div className="text-2xl font-semibold">
                   {balance.value !== undefined &&
-                    ethers.utils.formatEther(balance.value)}
+                    ethers.utils.formatEther(balance.value)?.substring(0, 4)}
                 </div>
               </>
             )}

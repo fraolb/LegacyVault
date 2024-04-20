@@ -18,6 +18,7 @@ module.exports = {
         ///bg color
         mainBg: "#ffffff",
         mainDark: "#252f35",
+        inputDarkBg: "#222633",
         /** base */
         gypsum: "#FCF6F1",
         sand: "#E7E3D4",

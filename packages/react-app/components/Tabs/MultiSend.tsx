@@ -63,7 +63,7 @@ const MultiSend = () => {
     });
 
   return (
-    <div className="container p-4">
+    <div className="container p-4 md:w-1/4 m-auto">
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Multi - Sender
       </h1>
@@ -81,7 +81,7 @@ const MultiSend = () => {
             type="number"
             value={amount}
             onChange={handleAmountChange}
-            className="mt-1 text-black focus:ring-blue-500 w-3/4 focus:border-blue-500 block shadow-sm sm:text-sm border-gray-300 rounded-md px-4 py-2 border"
+            className="mt-1 bg-inputDarkBg text-white focus:ring-mainHard w-3/4 focus:border-mainHard block shadow-sm sm:text-sm border-mainHard rounded-md px-4 py-2 border"
           />
         </div>
         <div className="text-l font-semibold text-center text-white">
@@ -98,7 +98,7 @@ const MultiSend = () => {
                 value={address}
                 placeholder={`address ${index + 1}`}
                 onChange={(e) => handleAddressChange(index, e.target.value)}
-                className="mt-1 text-black focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-4 py-2"
+                className="mt-1 bg-inputDarkBg text-white focus:ring-mainHard focus:border-mainHard block w-full shadow-sm sm:text-sm border border-mainHard rounded-md px-4 py-2"
               />
               <button
                 type="button"
@@ -148,7 +148,7 @@ const MultiSend = () => {
             <div className="w-full">Add Receiver Address!</div>
           ) : null}
         </div>
-        <div className="fixed bottom-16 left-0 right-0  p-4 sm:p-6 ">
+        <div className="fixed bottom-16 left-0 right-0  p-4 sm:p-6 md:w-1/4 md:m-auto">
           <button
             type="button"
             onClick={handleSend}
