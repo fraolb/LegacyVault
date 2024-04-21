@@ -112,7 +112,7 @@ const Lock = () => {
       functionName: "Withdraw",
     });
     console.log("withdraw");
-    setUserData({});
+    // setUserData({});
   };
 
   useEffect(() => {
