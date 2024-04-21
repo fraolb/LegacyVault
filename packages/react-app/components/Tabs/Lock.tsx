@@ -119,15 +119,19 @@ const Lock = () => {
     const fetchData = async () => {
       if (isConnected && address) {
         try {
-          const result: UserData = await readContract(config, {
+          const result = await readContract(config, {
             abi: LockABI,
             address: LockContract,
             functionName: "getUserData",
             account: address,
           });
-          setUserData(result);
-          setCheckUser("have");
-          console.log("the result is ", result);
+          if (result) {
+            setUserData(result as UserData);
+            setCheckUser("have");
+            console.log("the result is ", result);
+          } else {
+            setCheckUser("notHave");
+          }
         } catch (err) {
           setCheckUser("notHave");
           console.log("error ", err);
