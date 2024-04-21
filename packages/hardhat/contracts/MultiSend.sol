@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract MultiSend {
+/**@title Legacy Vault
+ * @author Fraol Bereket
+ * @notice The contract is for creating smart contract where users can send tokens in one go for multiple people
+ * @dev This contract doesnt need any fees to be added
+ */
+
+contract MultiSendContract {
     event FundsReceived(address indexed sender, uint256 amount);
     event FundsSent(address indexed recipient, uint256 amount);
 

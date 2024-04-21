@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Theme } from "@uniswap/widgets";
 import "@uniswap/widgets/fonts.css";
 import TokenList from "../../assets/MainnetTokens.json";
+import { useAccount } from "wagmi";
 
 const theme: Theme = {
   primary: "#FFF",
@@ -32,6 +33,7 @@ const LoadingSpinner = () => (
 
 const Swap = () => {
   const [celoAddress, setCeloAddress] = useState([]);
+  const { address, isConnected, chainId } = useAccount();
 
   // useEffect(() => {
   //   const fetchBalances = async () => {
@@ -60,7 +62,9 @@ const Swap = () => {
   return (
     <div className="container mx-auto pt-4">
       <h1 className="text-3xl font-semibold mb-6 text-center">Swap Tokens</h1>
-      <SwapWidget tokenList={TokenList} theme={theme} />
+      <div className="flex justify-center">
+        <SwapWidget tokenList={TokenList} theme={theme} />
+      </div>
     </div>
   );
 };

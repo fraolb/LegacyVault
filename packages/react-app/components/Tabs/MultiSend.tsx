@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { newKit } from "@celo/contractkit";
 import MultiSendABI from "../../ContractABI/MultiSendABI.json";
 import {
@@ -17,6 +17,9 @@ const MultiSend = () => {
   const [userAddress, setUserAddress] = useState<string>("");
 
   const { data: hash, error, isPending, writeContract } = useWriteContract();
+  const transactionExplorerUrl = useMemo(() => {
+    return `https://explorer.celo.org/alfajores/tx/${hash}`;
+  }, [hash]);
 
   const MultiSendContract = "0x89BE7812ff29020a5Fa31b9a0ccf17A37D9B90F9";
 
@@ -130,11 +133,19 @@ const MultiSend = () => {
           </button>
         </div>
         <div className="w-full flex flex-wrap">
-          {/* {hash && (
-            <div className="break-words">
-              Transaction Hash: <div className="w-1/2">{hash}</div>
+          {hash && (
+            <div className="w-full">
+              Transaction Hash:{" "}
+              <a
+                className="align-center text-xs text-mainHard"
+                href={transactionExplorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {hash.substring(0, 8)}...{hash.substring(hash.length - 6)}
+              </a>
             </div>
-          )} */}
+          )}
           {isConfirming && (
             <div className="w-full">Waiting for confirmation...</div>
           )}
