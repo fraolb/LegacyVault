@@ -58,7 +58,7 @@ const FAQ = () => {
           </h2>
           <p className="text-justify">
             The Coins page in Legacy Vault displays the token holdings of the
-            user's account. Users can view their current token holdings, copy
+            users account. Users can view their current token holdings, copy
             token addresses for swapping purposes, and see token values in USD
             for comparison.
           </p>
