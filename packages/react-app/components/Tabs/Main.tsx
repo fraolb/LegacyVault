@@ -19,7 +19,7 @@ const Main = () => {
   );
   const [celoAddress, setCeloAddress] = useState([]);
 
-  function copyToClipboard(text) {
+  function copyToClipboard(text: string) {
     navigator.clipboard
       .writeText(text)
       .then(() => {
@@ -31,6 +31,7 @@ const Main = () => {
         // Handle any errors that might occur during copying
       });
   }
+
   console.log("the chain id is ", account, address, chainId);
 
   useEffect(() => {
