@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import TokenList from "../../assets/MainnetTokens.json";
 import nativeCeloTokens from "../../assets/celoNativeTokens.json";
 import testnetCeloTokens from "../../assets/TestnetTokens.json";
+import { Address } from "viem";
 
 const Main = () => {
   const [userAddress, setUserAddress] = useState("");
@@ -47,7 +48,7 @@ const Main = () => {
               const TokenSymbol = token.symbol;
               const balance = await getBalance(config, {
                 address: address,
-                token: token.address,
+                token: token.address as Address,
               });
               return { ...balance, token: TokenAddress, symbol: TokenSymbol };
             }
@@ -94,7 +95,7 @@ const Main = () => {
                 const TokenAddress = token.address;
                 const balance = await getBalance(config, {
                   address: address,
-                  token: token.address,
+                  token: token.address as Address,
                 });
                 return { ...balance, token: TokenAddress };
               })
