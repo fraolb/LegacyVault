@@ -11,13 +11,19 @@ import { config } from "@/config";
 import { ethers } from "ethers";
 import { parseEther } from "viem";
 
+interface UserData {
+  timer: string;
+  amount: string;
+  distributeAccounts: string[];
+}
+
 const Lock = () => {
   const { address, isConnected, chainId } = useAccount();
   const [date, setDate] = useState<string>("");
   const [walletAddresses, setWalletAddresses] = useState<string[]>([""]);
   const [amount, setAmount] = useState<string>("");
   const [checkUser, setCheckUser] = useState("loading");
-  const [userData, setUserData] = useState<undefined>();
+  const [userData, setUserData] = useState<UserData | undefined>();
   const [formError, setFormError] = useState("");
 
   const LockContract = "0x2d5f0779659f8bCE75ABFD19C571F361574C50b4";
@@ -106,7 +112,7 @@ const Lock = () => {
       functionName: "Withdraw",
     });
     console.log("withdraw");
-    setUserData("");
+    setUserData({});
   };
 
   useEffect(() => {
