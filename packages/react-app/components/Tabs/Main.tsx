@@ -2,13 +2,21 @@ import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { getBalance, getAccount } from "@wagmi/core";
 import { config } from "@/config";
-import { GetBalanceReturnType } from "@wagmi/core";
+
 import { formatEther } from "viem";
 import { ethers } from "ethers";
 import TokenList from "../../assets/MainnetTokens.json";
 import nativeCeloTokens from "../../assets/celoNativeTokens.json";
 import testnetCeloTokens from "../../assets/TestnetTokens.json";
 import { Address } from "viem";
+
+interface GetBalanceReturnType {
+  value: bigint; // Example data type, adjust as needed
+  symbol: string;
+  decimals: number;
+  formatted: string; // Example data type, adjust as needed
+  token: string; // Define the token property
+}
 
 const Main = () => {
   const [userAddress, setUserAddress] = useState("");
@@ -128,25 +136,27 @@ const Main = () => {
       )}
 
       <div className="grid grid-cols-1 gap-2 mb-12">
-        {balances.map((balance, index) => (
+        {balances.map((tokenBalance, index) => (
           <div
             key={index}
             className="bg-inputDarkBg border border-mainHard text-white w-full text-mainHard rounded-lg shadow-lg p-2 px-4 flex items-center justify-between"
           >
-            {balance && (
+            {tokenBalance && (
               <>
                 <div className="flex flex-col">
                   <div className="text-xl font-semibold text-left">
-                    {balance.symbol}
+                    {tokenBalance.symbol}
                   </div>
                   <div className="flex text-mainHard items-center mt-1">
                     <span className="text-sm">
-                      {balance.token.substring(0, 4)}...
-                      {balance.token.substring(balance.token.length - 4)}
+                      {tokenBalance.token.substring(0, 4)}...
+                      {tokenBalance.token.substring(
+                        tokenBalance.token.length - 4
+                      )}
                     </span>
                     <button
                       className="ml-2 text-sm text-disabled hover:text-mainHard focus:outline-none"
-                      onClick={() => copyToClipboard(balance.token)}
+                      onClick={() => copyToClipboard(tokenBalance.token)}
                     >
                       <svg
                         width="16px"
@@ -171,8 +181,10 @@ const Main = () => {
                 </div>
 
                 <div className="text-2xl font-semibold">
-                  {balance.value !== undefined &&
-                    ethers.utils.formatEther(balance.value)?.substring(0, 4)}
+                  {tokenBalance.value !== undefined &&
+                    ethers.utils
+                      .formatEther(tokenBalance.value)
+                      ?.substring(0, 4)}
                 </div>
               </>
             )}

@@ -9,7 +9,7 @@ import { parseEther } from "viem";
 
 const Transfer = () => {
   const [address, setAddress] = useState("");
-  const { signTransaction } = useAccount();
+  //const { signTransaction } = useAccount();
   const {
     data: hash,
     isPending,
@@ -18,14 +18,13 @@ const Transfer = () => {
   } = useSendTransaction();
 
   async function submit() {
-    if (address == "") {
-      return;
-    }
-
-    const to = address;
-    const value = "0.1";
-    sendTransaction({ to, value: parseEther(value) });
-    sendTransaction({ to, value: parseEther(value) });
+    // if (address == "") {
+    //   return;
+    // }
+    // const to = address;
+    // const value = "0.1";
+    // sendTransaction({ to, value: parseEther(value) });
+    // sendTransaction({ to, value: parseEther(value) });
   }
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
@@ -49,8 +48,8 @@ const Transfer = () => {
     ];
 
     try {
-      const signedTransactions = await signTransaction(transactions);
-      console.log("Signed transactions:", signedTransactions);
+      // const signedTransactions = await signTransaction(transactions);
+      // console.log("Signed transactions:", signedTransactions);
     } catch (error) {
       console.error("Error signing transactions:", error);
     }
