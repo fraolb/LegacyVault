@@ -119,7 +119,7 @@ const Lock = () => {
     const fetchData = async () => {
       if (isConnected && address) {
         try {
-          const result = await readContract(config, {
+          const result: UserData = await readContract(config, {
             abi: LockABI,
             address: LockContract,
             functionName: "getUserData",
