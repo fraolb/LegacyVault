@@ -22,10 +22,15 @@ const Lock = () => {
 
   const LockContract = "0x2d5f0779659f8bCE75ABFD19C571F361574C50b4";
   const { data: hash, error, isPending, writeContract } = useWriteContract();
-  const timerDate = useMemo(
-    () => new Date(parseInt(userData?.timer)).toLocaleString(),
-    [userData?.timer]
-  );
+
+  const timerDate = useMemo(() => {
+    if (userData && userData.timer) {
+      return new Date(parseInt(userData.timer)).toLocaleString();
+    } else {
+      return ""; // Or any other default value or behavior you prefer
+    }
+  }, [userData?.timer]);
+
   const amountInCELO = useMemo(() => {
     if (!userData?.amount) return "";
     return (parseInt(userData.amount) * 1e-18).toLocaleString(undefined, {
