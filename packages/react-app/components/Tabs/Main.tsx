@@ -127,7 +127,7 @@ const Main = () => {
   console.log(balances);
 
   return (
-    <div className="container w-full p-4 ">
+    <div className="container w-80 m-1 p-2">
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Token Balances
       </h1>

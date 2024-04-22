@@ -161,7 +161,7 @@ const Lock = () => {
   };
 
   return (
-    <div className="container p-4 md:w-1/4 m-auto">
+    <div className="container p-4 m-auto">
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Lock Your Tokens
       </h1>

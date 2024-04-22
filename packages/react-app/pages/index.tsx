@@ -38,7 +38,7 @@ export default function Home() {
     <div className="flex flex-col ">
       {isConnected ? (
         <div className="h2 text-center">
-          <div className="w-screen p-2">
+          <div className="p-2">
             {selectedPage == 0 ? (
               <Main />
             ) : selectedPage == 1 ? (
