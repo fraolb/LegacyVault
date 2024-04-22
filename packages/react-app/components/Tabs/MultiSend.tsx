@@ -169,7 +169,7 @@ const MultiSend = () => {
           )}
           {isConfirmed && <div className="w-full">Transaction confirmed.</div>}
           {error && (
-            <div className="w-full">
+            <div className="w-80">
               Error: {(error as BaseError).shortMessage || error.message}
             </div>
           )}
