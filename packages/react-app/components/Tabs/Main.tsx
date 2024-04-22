@@ -47,73 +47,76 @@ const Main = () => {
     const fetchBalances = async () => {
       if (isConnected && address) {
         setUserAddress(address);
-
-        // Fetch the balance of the native token
-        const nativeTokenBalance = await Promise.all(
-          (chainId == 42220 ? nativeCeloTokens : testnetCeloTokens).map(
-            async (token) => {
-              const TokenAddress = token.address;
-              const TokenSymbol = token.symbol;
-              const balance = await getBalance(config, {
-                address: address,
-                token: token.address as Address,
-              });
-              return { ...balance, token: TokenAddress, symbol: TokenSymbol };
-            }
-          )
-        );
-        setBalances([...nativeTokenBalance]);
-
-        if (chainId !== 42220) {
-          const balance = await getBalance(config, {
-            address: address,
-          });
-          console.log("the coin native ", balance);
-          setBalances([
-            {
-              value: balance?.value,
-              symbol: balance?.symbol,
-              decimals: balance?.decimals,
-              formatted: balance?.formatted,
-              token: "",
-            },
-            ...nativeTokenBalance,
-          ]);
-        }
-
-        // Fetch Uniswap token list
-        //https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
-        if (chainId == 42220) {
-          try {
-            //   const response = await fetch(
-            //     "https://cors.bridged.cc/https://gateway.ipfs.io/ipns/tokens.uniswap.org"
-            //   );
-            //   const { tokens } = await response.json();
-
-            // Filter tokens that are on the Celo mainnet
-            // const celoMainnetTokensFromUniSwap = tokens.filter(
-            //   (token) => token.chainId === 42220
-            // );
-
-            //setCeloAddress(celoMainnetTokensFromUniSwap);
-
-            // Fetch balances of Uniswap tokens
-            const TokenBalances = await Promise.all(
-              TokenList.map(async (token) => {
+        try {
+          // Fetch the balance of the native token
+          const nativeTokenBalance = await Promise.all(
+            (chainId == 42220 ? nativeCeloTokens : testnetCeloTokens).map(
+              async (token) => {
                 const TokenAddress = token.address;
+                const TokenSymbol = token.symbol;
                 const balance = await getBalance(config, {
                   address: address,
                   token: token.address as Address,
                 });
-                return { ...balance, token: TokenAddress };
-              })
-            );
+                return { ...balance, token: TokenAddress, symbol: TokenSymbol };
+              }
+            )
+          );
+          setBalances([...nativeTokenBalance]);
 
-            // Update the state with all balances combined
-            setBalances([...nativeTokenBalance, ...TokenBalances]);
-          } catch (err) {
-            console.log(err);
+          if (chainId !== 42220) {
+            const balance = await getBalance(config, {
+              address: address,
+            });
+            console.log("the coin native ", balance);
+            setBalances([
+              {
+                value: balance?.value,
+                symbol: balance?.symbol,
+                decimals: balance?.decimals,
+                formatted: balance?.formatted,
+                token: "",
+              },
+              ...nativeTokenBalance,
+            ]);
           }
+
+          // Fetch Uniswap token list
+          //https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
+          if (chainId == 42220) {
+            try {
+              //   const response = await fetch(
+              //     "https://cors.bridged.cc/https://gateway.ipfs.io/ipns/tokens.uniswap.org"
+              //   );
+              //   const { tokens } = await response.json();
+
+              // Filter tokens that are on the Celo mainnet
+              // const celoMainnetTokensFromUniSwap = tokens.filter(
+              //   (token) => token.chainId === 42220
+              // );
+
+              //setCeloAddress(celoMainnetTokensFromUniSwap);
+
+              // Fetch balances of Uniswap tokens
+              const TokenBalances = await Promise.all(
+                TokenList.map(async (token) => {
+                  const TokenAddress = token.address;
+                  const balance = await getBalance(config, {
+                    address: address,
+                    token: token.address as Address,
+                  });
+                  return { ...balance, token: TokenAddress };
+                })
+              );
+
+              // Update the state with all balances combined
+              setBalances([...nativeTokenBalance, ...TokenBalances]);
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        } catch (err) {
+          console.log(err);
         }
       }
     };

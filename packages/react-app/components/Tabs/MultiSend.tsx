@@ -9,19 +9,23 @@ import {
 } from "wagmi";
 import { ethers } from "ethers";
 import { parseEther } from "viem";
+import { parseGwei } from "viem";
 
 const MultiSend = () => {
   const [addresses, setAddresses] = useState<string[]>([""]);
   const [amount, setAmount] = useState<string>("");
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const [userAddress, setUserAddress] = useState<string>("");
 
   const { data: hash, error, isPending, writeContract } = useWriteContract();
   const transactionExplorerUrl = useMemo(() => {
-    return `https://explorer.celo.org/alfajores/tx/${hash}`;
+    return chainId == 42220
+      ? `https://celoscan.io/tx/${hash}`
+      : `https://explorer.celo.org/alfajores/tx/${hash}`;
   }, [hash]);
 
-  const MultiSendContract = "0x89BE7812ff29020a5Fa31b9a0ccf17A37D9B90F9";
+  const MultiSendContract = "0xA1b265C3Ed5dCdff6A329a2f1a12A14d7B977959";
+  const MultiSendTestnetContract = "0x89BE7812ff29020a5Fa31b9a0ccf17A37D9B90F9";
 
   useEffect(() => {
     if (isConnected && address) {
@@ -52,12 +56,26 @@ const MultiSend = () => {
   const handleSend = async () => {
     const amountToSend = Number(amount) * addresses.length;
     writeContract({
-      address: MultiSendContract,
+      address: chainId == 42220 ? MultiSendContract : MultiSendTestnetContract,
+      account: address,
       abi: MultiSendABI,
       functionName: "multiSend",
       args: [addresses],
-      value: parseEther(`${amountToSend}`),
+      value: parseEther(`${amount}`),
     });
+    // const valueInEth = 0.1;
+    // const valueInWei = ethers.utils.parseEther(valueInEth.toString());
+    // const sentAmount = Number.parseFloat(amount);
+    // writeContract({
+    //   abi: MultiSendABI,
+    //   account: address,
+    //   address: MultiSendContract,
+    //   functionName: "multiSend",
+    //   args: [addresses],
+    //   value: parseEther(`${amount}`),
+    //   gas: parseGwei("20"),
+    //   gasPrice: parseGwei("20"),
+    // });
   };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =

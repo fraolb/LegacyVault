@@ -26,7 +26,8 @@ const Lock = () => {
   const [userData, setUserData] = useState<UserData | undefined>();
   const [formError, setFormError] = useState("");
 
-  const LockContract = "0x2d5f0779659f8bCE75ABFD19C571F361574C50b4";
+  const LockContract = "0x85A8AD9F6B63999C8EE662Cd0447A307Bb662521";
+  const LockContractTestnet = "0x2d5f0779659f8bCE75ABFD19C571F361574C50b4";
   const { data: hash, error, isPending, writeContract } = useWriteContract();
 
   const timerDate = useMemo(() => {
@@ -44,7 +45,9 @@ const Lock = () => {
     });
   }, [userData?.amount]);
   const transactionExplorerUrl = useMemo(() => {
-    return `https://explorer.celo.org/alfajores/tx/${hash}`;
+    return chainId == 42220
+      ? `https://celoscan.io/tx/${hash}`
+      : `https://explorer.celo.org/alfajores/tx/${hash}`;
   }, [hash]);
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +93,7 @@ const Lock = () => {
     console.log("Formatted data:", { timestamp, validAddresses, amountInWei });
 
     writeContract({
-      address: LockContract,
+      address: chainId == 42220 ? LockContract : LockContractTestnet,
       abi: LockABI,
       functionName: "Deposit",
       args: [timestamp, validAddresses],
@@ -107,7 +110,7 @@ const Lock = () => {
 
   const handleWithdraw = async () => {
     writeContract({
-      address: LockContract,
+      address: chainId == 42220 ? LockContract : LockContractTestnet,
       abi: LockABI,
       functionName: "Withdraw",
     });
@@ -121,7 +124,7 @@ const Lock = () => {
         try {
           const result = await readContract(config, {
             abi: LockABI,
-            address: LockContract,
+            address: chainId == 42220 ? LockContract : LockContractTestnet,
             functionName: "getUserData",
             account: address,
           });
